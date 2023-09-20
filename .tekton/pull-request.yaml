@@ -1,0 +1,27 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pac-e2e-tests-webhooks-pull-request
+  annotations:
+    pipelinesascode.tekton.dev/on-event: "[pull_request]"
+    pipelinesascode.tekton.dev/on-target-branch: "[main]"
+    pipelinesascode.tekton.dev/max-keep-runs: "5"
+spec:
+  params:
+    - name: repo_url
+      value: "{{ repo_url }}"
+    - name: revision
+      value: "{{ revision }}"
+  pipelineSpec:
+    params:
+      - name: repo_url
+      - name: revision
+    tasks:
+      - name: noop-task
+        taskSpec:
+          steps:
+            - name: noop-task
+              image: stedolan/jq
+              script: |
+                echo '{"fruit":{"name":"apple","color":"green","price":1.20}}' | jq '.' -C
